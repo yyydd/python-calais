@@ -26,7 +26,7 @@ class Calais():
     Python class that knows how to talk to the OpenCalais API.  Use the analyze() and analyze_url() methods, which return CalaisResponse objects.  
     """
     api_key = None
-    processing_directives = {"contentType":"TEXT/RAW", "outputFormat":"application/json", "reltagBaseURL":None, "calculateRelevanceScore":"true", "enableMetadataType":None, "discardMetadata":None, "omitOutputtingOriginalText":"true"}
+    processing_directives = {"contentType":"TEXT/RAW", "outputFormat":"application/json", "reltagBaseURL":None, "calculateRelevanceScore":"true", "enableMetadataType":"SocialTags", "discardMetadata":None, "omitOutputtingOriginalText":"true"}
     user_directives = {"allowDistribution":"false", "allowSearch":"false", "externalID":None}
     external_metadata = {}
 
@@ -79,6 +79,7 @@ class Calais():
         self.processing_directives["contentType"]=content_type
         if external_id:
             self.user_directives["externalID"] = external_id
+        
         return CalaisResponse(self.rest_POST(content))
 
     def analyze_url(self, url):
@@ -177,3 +178,9 @@ class CalaisResponse():
                         print "\t%s:%s" % (k,v)
                     elif isinstance(v, dict) and v.has_key('name'):
                         print "\t%s:%s" % (k, v['name'])
+    
+    def print_social_tags(self):
+        if not hasattr(self, "socialTag"):
+            return None
+        for socialTag in self.socialTag:
+            print "%s %s" % (socialTag['name'], socialTag['importance'])
